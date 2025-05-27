@@ -1,3 +1,5 @@
 FROM openjdk:22
-ADD ./docker-spring-boot-app.jar docker-spring-boot-app.jar
-ENTRYPOINT ["java", "-jar", "docker-spring-boot-app.jar"]
+WORKDIR /app
+COPY docker-spring-boot-app.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

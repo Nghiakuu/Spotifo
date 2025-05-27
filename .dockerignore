@@ -1,0 +1,55 @@
+# Maven build files
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Git files
+.git/
+.gitignore
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+*~
+
+# Test files
+src/test/
+
+# Documentation
+README.md
+docs/
+
+# Node modules (if any)
+node_modules/
+
+# Build tools
+.gradle/
+build/
+out/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Local configuration
+application-local.properties
+application-dev.properties
+
+# Upload directories (will be mounted as volumes)
+src/main/resources/static/images/coverImg/
+src/main/resources/static/images/audio/
+src/main/resources/static/images/avatar/ 

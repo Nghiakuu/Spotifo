@@ -1,0 +1,156 @@
+:root {
+    --spotify-green: #1DB954;
+    --spotify-black: #191414;
+    --spotify-light-black: #282828;
+    --spotify-gray: #535353;
+    --spotify-light-gray: #b3b3b3;
+}
+
+body {
+    background-color: var(--spotify-black);
+    color: white;
+    margin: 0;
+    padding-top: 60px;
+}
+
+.navbar-spotify {
+    background-color: var(--spotify-light-black) !important;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    height: 60px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: white !important;
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand img {
+    height: 30px;
+    margin-right: 10px;
+}
+
+.nav-link {
+    color: var(--spotify-light-gray) !important;
+    font-weight: 500;
+    margin: 0 0.5rem;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: white !important;
+}
+
+.search-form {
+    flex-grow: 1;
+    max-width: 500px;
+    margin: 0 1rem;
+}
+
+.search-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    box-shadow: none;
+    outline: none;
+}
+
+.search-btn {
+    background: transparent;
+    border: none;
+    color: var(--spotify-light-gray);
+    margin-left: -40px;
+    z-index: 10;
+}
+
+.user-dropdown {
+    background-color: var(--spotify-gray);
+    border: none;
+    border-radius: 23px;
+    padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.user-dropdown:hover {
+    background-color: var(--spotify-gray);
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+    object-fit: cover;
+}
+
+.dropdown-menu {
+    background-color: var(--spotify-gray);
+    border: none;
+    border-radius: 5px;
+    padding: 0.5rem 0;
+}
+
+.dropdown-item {
+    color: white !important;
+    padding: 0.5rem 1.5rem;
+}
+
+.dropdown-item:hover {
+    background-color: var(--spotify-light-gray);
+    color: white !important;
+}
+
+.dropdown-divider {
+    border-color: var(--spotify-light-gray);
+    opacity: 0.2;
+}
+
+.btn-logout {
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    color: white !important;
+}
+
+.btn-logout:hover {
+    background-color: transparent;
+    color: white;
+}
+
+.navbar-toggler {
+    border: none;
+    color: white;
+}
+
+.navbar-toggler:focus {
+    box-shadow: none;
+}
+
+@media (max-width: 992px) {
+    .search-form {
+        margin: 1rem 0;
+        max-width: 100%;
+    }
+
+    .navbar-collapse {
+        padding-bottom: 1rem;
+    }
+} 

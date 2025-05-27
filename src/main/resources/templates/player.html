@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${music.title + ' - Spotifo'}">Player - Spotifo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/header-styles.css}">
+    <style>
+        :root {
+            --spotify-green: #1DB954;
+            --spotify-black: #191414;
+            --spotify-dark-gray: #282828;
+            --spotify-light-gray: #B3B3B3;
+        }
+
+        body {
+            background-color: var(--spotify-black);
+            color: white;
+            font-family: 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .player-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column; /* Xếp các phần tử theo chiều dọc */
+            align-items: center; /* Căn giữa theo chiều ngang */
+            padding: 40px 0;
+        }
+
+        .player-card {
+            background: linear-gradient(to bottom, var(--spotify-dark-gray), var(--spotify-black));
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Căn giữa các mục theo chiều ngang */
+            margin-bottom: 30px;
+        }
+
+        .cover-art {
+            width: 300px;
+            height: 300px;
+            border-radius: 8px;
+            margin: 0 auto 30px;
+            display: block;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+
+        .song-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .song-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .artist-name {
+            color: var(--spotify-light-gray);
+            font-size: 1.2rem;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .control-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .control-button:hover {
+            transform: scale(1.1);
+            color: var(--spotify-green);
+        }
+
+        .play-button {
+            font-size: 3rem;
+        }
+
+        .progress-container {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background: var(--spotify-green);
+            border-radius: 2px;
+            width: 0%;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            color: var(--spotify-light-gray);
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+            align-self: flex-end; /* Căn sang bên phải trong flex container cha */
+        }
+
+        .volume-slider {
+            width: 100px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .volume-level {
+            height: 100%;
+            background: var(--spotify-green);
+            border-radius: 2px;
+            width: 100%;
+        }
+
+        .lyrics-container {
+            background: var(--spotify-dark-gray);
+            border-radius: 12px;
+            padding: 30px;
+            color: var(--spotify-light-gray);
+            max-height: 400px;
+            width: 100%;
+            max-width: 800px;
+            overflow-y: auto;
+            display: none; /* Ẩn lyrics ban đầu */
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5); /* Thêm bóng đổ giống player-card */
+            scrollbar-width: thin;
+            scrollbar-color: #535353 #282828;
+        }
+
+        .lyrics-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .lyrics-container::-webkit-scrollbar-track {
+            background: #282828;
+            border-radius: 10px;
+        }
+
+        .lyrics-container::-webkit-scrollbar-thumb {
+            background-color: #535353;
+            border-radius: 10px;
+            border: 2px solid #282828;
+        }
+
+        .lyrics-container h2 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .lyrics-container pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: var(--spotify-light-gray);
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="player-container">
+    <div class="player-card">
+        <img th:src="${music.coverImage != null ? music.coverImage : '/images/default-cover.jpg'}"
+             th:alt="'Cover for ' + ${music.title}"
+             class="cover-art">
+
+        <div class="song-info">
+            <h1 class="song-title" th:text="${music.title}">Song Title</h1>
+            <p class="artist-name" th:text="${music.uploadedId != null ? music.uploadedId.username : 'Unknown Artist'}">
+                Artist Name
+            </p>
+        </div>
+
+        <div class="player-controls">
+            <button class="control-button" onclick="shuffle()">
+                <i class="bi bi-shuffle"></i>
+            </button>
+            <button class="control-button" onclick="previous()">
+                <i class="bi bi-skip-start-fill"></i>
+            </button>
+            <button class="control-button play-button" onclick="togglePlay()">
+                <i class="bi bi-play-fill"></i>
+            </button>
+            <button class="control-button" onclick="next()">
+                <i class="bi bi-skip-end-fill"></i>
+            </button>
+            <button class="control-button" onclick="repeat()">
+                <i class="bi bi-repeat"></i>
+            </button>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" onclick="seek(event)">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div class="time-info">
+                <span id="current-time">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+        </div>
+
+        <div class="volume-control">
+            <i class="bi bi-volume-down"></i>
+            <div class="volume-slider" onclick="setVolume(event)">
+                <div class="volume-level" id="volume-level"></div>
+            </div>
+            <i class="bi bi-volume-up"></i>
+        </div>
+
+        <div class="text-center mt-4">
+            <button id="toggle-lyrics-btn" class="btn btn-secondary">
+                <i class="bi bi-text-left"></i> Xem lời bài hát
+            </button>
+        </div>
+    </div>
+
+    <div class="lyrics-container" th:if="${music.lyrics != null and !music.lyrics.isEmpty()}">
+        <h2>Lời bài hát</h2>
+        <pre th:text="${music.lyrics}"></pre>
+    </div>
+</div>
+
+<audio id="audio-player" th:src="${music.audioFile}" style="display: none;"></audio>
+
+<script>
+    const audio = document.getElementById('audio-player');
+    const playButton = document.querySelector('.play-button i');
+    const progress = document.getElementById('progress');
+    const currentTimeSpan = document.getElementById('current-time');
+    const durationSpan = document.getElementById('duration');
+    const volumeLevel = document.getElementById('volume-level');
+    let isPlaying = false;
+
+    function togglePlay() {
+        if (isPlaying) {
+            audio.pause();
+            playButton.classList.remove('bi-pause-fill');
+            playButton.classList.add('bi-play-fill');
+        } else {
+            audio.play();
+            playButton.classList.remove('bi-play-fill');
+            playButton.classList.add('bi-pause-fill');
+        }
+        isPlaying = !isPlaying;
+    }
+
+    function seek(event) {
+        const progressBar = event.currentTarget;
+        const percent = event.offsetX / progressBar.offsetWidth;
+        audio.currentTime = percent * audio.duration;
+    }
+
+    function setVolume(event) {
+        const volumeSlider = event.currentTarget;
+        const percent = event.offsetX / volumeSlider.offsetWidth;
+        audio.volume = percent;
+        volumeLevel.style.width = (percent * 100) + '%';
+    }
+
+    audio.addEventListener('timeupdate', () => {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progress.style.width = percent + '%';
+        currentTimeSpan.textContent = formatTime(audio.currentTime);
+    });
+
+    audio.addEventListener('loadedmetadata', () => {
+        durationSpan.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('ended', () => {
+        isPlaying = false;
+        playButton.classList.remove('bi-pause-fill');
+        playButton.classList.add('bi-play-fill');
+    });
+
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        seconds = Math.floor(seconds % 60);
+        return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function shuffle() {
+        console.log('Shuffle clicked');
+    }
+
+    function previous() {
+        console.log('Previous clicked');
+    }
+
+    function next() {
+        console.log('Next clicked');
+    }
+
+    function repeat() {
+        console.log('Repeat clicked');
+    }
+
+    document.getElementById('toggle-lyrics-btn').addEventListener('click', function() {
+        const lyricsContainer = document.querySelector('.lyrics-container');
+        if (lyricsContainer.style.display === 'none') {
+            lyricsContainer.style.display = 'block';
+            this.innerHTML = '<i class="bi bi-text-left"></i> Ẩn lời bài hát';
+        } else {
+            lyricsContainer.style.display = 'none';
+            this.innerHTML = '<i class="bi bi-text-left"></i> Xem lời bài hát';
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
